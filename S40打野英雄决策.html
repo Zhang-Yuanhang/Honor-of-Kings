@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Markmap</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+#mindmap {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.14.4/dist/style.css">
+</head>
+<body>
+<svg id="mindmap"></svg>
+<script src="https://cdn.jsdelivr.net/npm/d3@6.7.0"></script><script src="https://cdn.jsdelivr.net/npm/markmap-view@0.14.4"></script><script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.14.4/dist/index.umd.min.js"></script><script>(r => {
+                setTimeout(r);
+              })(() => {
+  const {
+    markmap,
+    mm
+  } = window;
+  const toolbar = new markmap.Toolbar();
+  toolbar.attach(mm);
+  const el = toolbar.render();
+  el.setAttribute('style', 'position:absolute;bottom:20px;right:20px');
+  document.body.append(el);
+})</script><script>((getMarkmap, getOptions, root, jsonOptions) => {
+        const markmap = getMarkmap();
+        window.mm = markmap.Markmap.create('svg#mindmap', (getOptions || markmap.deriveOptions)(jsonOptions), root);
+      })(() => window.markmap,null,{"type":"heading","depth":0,"payload":{"lines":[0,1]},"content":"<strong>S40-打野BP决策链</strong>","children":[{"type":"heading","depth":1,"payload":{"lines":[2,3]},"content":"<strong>阵容优先级（4/5L出）</strong>","children":[{"type":"list_item","depth":2,"payload":{"lines":[3,4]},"content":"自家战边+软辅","children":[{"type":"list_item","depth":3,"payload":{"lines":[4,5]},"content":"战刺","children":[{"type":"list_item","depth":4,"payload":{"lines":[5,6]},"content":"<strong>counter回血、短位移：戈娅艾琳 =&gt; 宫本</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[6,7]},"content":"<strong>多段伤害，且不够灵活 =&gt; 铠</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[7,8]},"content":"<strong>比较灵活，小控制多，有前排适合当跳板 =&gt; 杨戬</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[8,9]},"content":"<strong>比较笨重，爆发低 =&gt; 大司命</strong>"}]}]},{"type":"list_item","depth":2,"payload":{"lines":[9,10]},"content":"自家坦边+软辅：","children":[{"type":"list_item","depth":3,"payload":{"lines":[10,11]},"content":"AD刺","children":[{"type":"list_item","depth":4,"payload":{"lines":[11,12]},"content":"<strong>无控制射手 + 无强控 + 无强制位移 =&gt; 镜</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[12,13]},"content":"<strong>中辅前期弱 + 野区可进 + C好切 =&gt; 老虎</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[13,14]},"content":"<strong>无强制下墙、无加盾回血（保命）、易斩杀 =&gt; 暃</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[14,15]},"content":"<strong>无爆发、无锁头 + 笨重缺带线点 =&gt; 韩信</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[15,16]},"content":"<strong>缺控制、缺爆发 + 软辅抱团好推一片 =&gt; 澜</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[16,17]},"content":"<strong>缺强控、缺爆发 + 偏笨重好拉扯 =&gt; 曜</strong>"}]}]},{"type":"list_item","depth":2,"payload":{"lines":[17,18]},"content":"自家战边+硬辅：","children":[{"type":"list_item","depth":3,"payload":{"lines":[18,19]},"content":"AP刺","children":[{"type":"list_item","depth":4,"payload":{"lines":[19,20]},"content":"<strong>无击落飞行物 / 保命技 + 站位分散 or 脆皮多 =&gt; 诸葛</strong>"},{"type":"list_item","depth":4,"payload":{"lines":[20,21]},"content":"<strong>断大的小控制少 + 站位偏集中 or 法师多 or 怕突脸 =&gt; 司马懿</strong>"}]}]}]},{"type":"heading","depth":1,"payload":{"lines":[22,23]},"content":"<strong>针对射手counter优先级</strong>","children":[{"type":"list_item","depth":2,"payload":{"lines":[23,24]},"content":"对面游射+控制多：","children":[{"type":"list_item","depth":3,"payload":{"lines":[24,25]},"content":"<strong>公孙离-(宫本、韩信、司马懿)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[25,26]},"content":"<strong>敖隐-(宫本、韩信、铠)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[26,27]},"content":"<strong>艾琳-(宫本、澜、司马懿)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[27,28]},"content":"<strong>戈娅-(宫本、韩信、诸葛)</strong>"}]},{"type":"list_item","depth":2,"payload":{"lines":[28,29]},"content":"对面游射+控制少：","children":[{"type":"list_item","depth":3,"payload":{"lines":[29,30]},"content":"<strong>孙权-(铠、曜、大司命)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[30,31]},"content":"<strong>马可-(镜、铠、宫本)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[31,32]},"content":"<strong>孙尚香-(镜、暃、曜)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[32,33]},"content":"<strong>苍-(澜、铠、镜)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[33,34]},"content":"<strong>守约-(镜、司马懿、宫本)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[34,35]},"content":"<strong>李元芳-(镜、韩信、宫本)</strong>"}]},{"type":"list_item","depth":2,"payload":{"lines":[35,36]},"content":"呆射+站撸：","children":[{"type":"list_item","depth":3,"payload":{"lines":[36,37]},"content":"<strong>狄仁杰-(铠、镜、大司命)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[37,38]},"content":"<strong>虞姬-(诸葛、司马懿、铠)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[38,39]},"content":"<strong>鲁班-(杨戬、宫本、暃)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[39,40]},"content":"<strong>后羿-(大司命、澜、镜)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[40,41]},"content":"<strong>蒙犽-(铠、宫本、镜)</strong>"}]},{"type":"list_item","depth":2,"payload":{"lines":[41,42]},"content":"呆射+非站撸：","children":[{"type":"list_item","depth":3,"payload":{"lines":[42,43]},"content":"<strong>伽罗-(镜、韩信、暃)</strong>"},{"type":"list_item","depth":3,"payload":{"lines":[43,44]},"content":"<strong>黄忠-(大司命、杨戬、宫本</strong>"}]}]},{"type":"heading","depth":1,"payload":{"lines":[45,46]},"content":"<strong>熟练度优先级</strong>","children":[{"type":"list_item","depth":2,"payload":{"lines":[46,47]},"content":"AD刺：","children":[{"type":"list_item","depth":3,"payload":{"lines":[47,48]},"content":"<strong>韩信 &gt; 曜 &gt; 澜 &gt; 虎 &gt; 镜 &gt; 暃</strong>"}]},{"type":"list_item","depth":2,"payload":{"lines":[48,49]},"content":"法刺：","children":[{"type":"list_item","depth":3,"payload":{"lines":[49,50]},"content":"<strong>诸葛 &gt; 司马懿</strong>"}]},{"type":"list_item","depth":2,"payload":{"lines":[50,51]},"content":"战法刺：","children":[{"type":"list_item","depth":3,"payload":{"lines":[51,52]},"content":"<strong>宫本 &gt; 铠 &gt; 大司命 &gt; 杨戬</strong>"}]}]}]},{})</script>
+</body>
+</html>
