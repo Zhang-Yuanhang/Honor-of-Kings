@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 "饼干杯"-BYG王者荣耀联赛数据统计系统</title>
+    <style>
+        :root {
+            --primary-color: #5B7BA3;
+            --primary-light: #7BA3C9;
+            --primary-dark: #4A6890;
+            --accent-color: #E8A87C;
+            --accent-light: #F4D9C6;
+            --success-color: #7CB798;
+            --success-light: #C4E1D4;
+            --warning-color: #E8C87C;
+            --danger-color: #C98B8B;
+            --text-primary: #4A5568;
+            --text-secondary: #718096;
+            --bg-primary: #F7F9FC;
+            --bg-secondary: #EDF2F7;
+            --bg-card: #FFFFFF;
+            --border-color: #E2E8F0;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(74, 85, 104, 0.1);
+            overflow: hidden;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 24px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        /* 筛选器样式 */
+        .filter-bar {
+            background: var(--bg-secondary);
+            padding: 16px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .filter-group select,
+        .filter-group input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(91, 123, 163, 0.1);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg-secondary);
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(74, 85, 104, 0.08);
+            border-top: 3px solid var(--primary-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(74, 85, 104, 0.12);
+        }
+        
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin: 6px 0;
+        }
+        
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        
+        /* Tab导航 */
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap;
+            background: var(--bg-secondary);
+            padding: 12px 20px 0 20px;
+            gap: 4px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Section样式 */
+        .section {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(74, 85, 104, 0.08);
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .data-table th {
+            background: linear-gradient(to bottom, var(--bg-secondary), #E5E9ED);
+            color: var(--text-primary);
+            text-align: left;
+            padding: 12px 14px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 12px;
+        }
+        
+        .data-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: var(--bg-primary);
+        }
+        
+        .data-table tr:hover {
+            background-color: rgba(91, 123, 163, 0.1);
+        }
+        
+        .data-table .rank-1 {
+            background-color: #FFF3CD !important;
+            font-weight: bold;
+        }
+        
+        .data-table .rank-2 {
+            background-color: #E8E8E8 !important;
+            font-weight: bold;
+        }
+        
+        .data-table .rank-3 {
+            background-color: #FFE5D0 !important;
+            font-weight: bold;
+        }
+        
+        /* 多列布局 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 无数据提示 */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .no-data-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .tag-blue {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .tag-red {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .tag-gold {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        /* 卡片网格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .mini-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .mini-card .title {
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .mini-card .item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 4px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        
+        .mini-card .item:last-child {
+            border-bottom: none;
+        }
+        
+        .mini-card .item .rate {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+        
+        .footer .copyright {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🏆 "饼干杯"-BYG王者荣耀联赛数据统计系统</h1>
+            <p id="header-info">正在加载数据...</p>
+        </div>
+        
+        <!-- 筛选器 -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label>快速筛选:</label>
+                <select id="year-select" onchange="onYearChange()">
+                    <option value="all">全部数据</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>自定义日期:</label>
+                <input type="date" id="start-date" onchange="onDateChange()">
+                <span>至</span>
+                <input type="date" id="end-date" onchange="onDateChange()">
+            </div>
+            
+            <button class="btn btn-primary" onclick="loadStats()">🔍 查询</button>
+            <button class="btn btn-secondary" onclick="refreshData()">🔄 刷新数据</button>
+        </div>
+        
+        <!-- 基础统计 -->
+        <div class="stats-grid" id="basic-stats">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>加载中...</p>
+            </div>
+        </div>
+        
+        <!-- Tab导航 -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('overview')">📊 总览</button>
+            <button class="tab-btn" onclick="showTab('bounty')">💰 赏金榜</button>
+            <button class="tab-btn" onclick="showTab('players')">👑 玩家排行</button>
+            <button class="tab-btn" onclick="showTab('heroes')">⚔️ 英雄数据</button>
+            <button class="tab-btn" onclick="showTab('combos')">🤝 组合数据</button>
+            <button class="tab-btn" onclick="showTab('records')">📋 比赛记录</button>
+        </div>
+        
+        <!-- Tab内容 -->
+        <div id="tab-container">
+            <!-- 总览 -->
+            <div id="tab-overview" class="tab-content active">
+                <div class="grid-2">
+                    <div class="section">
+                        <div class="section-title">👑 玩家胜率TOP10</div>
+                        <table class="data-table" id="table-player-top"></table>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">⚔️ 英雄胜率TOP10</div>
+                        <table class="data-table" id="table-hero-top"></table>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📅 每日比赛统计</div>
+                    <table class="data-table" id="table-daily"></table>
+                </div>
+            </div>
+            
+            <!-- 赏金榜 -->
+            <div id="tab-bounty" class="tab-content">
+                <!-- 奖金池信息卡片 -->
+                <div class="section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">💰 奖金池初始值</div>
+                            <div id="pool-initial" style="font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">-</div>
+                        </div>
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">📤 已发放</div>
+                            <div id="pool-distributed" style="font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">-</div>
+                        </div>
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">💎 剩余</div>
+                            <div id="pool-remaining" style="font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">💰 赏金榜 <span style="font-size:12px;font-weight:normal;color:#666;">胜方全员+2元，胜方MVP+1元，败方MVP+1元</span></div>
+                    <table class="data-table" id="table-bounty"></table>
+                </div>
+            </div>
+            
+            <!-- 玩家排行 -->
+            <div id="tab-players" class="tab-content">
+                <div class="section">
+                    <div class="section-title">👑 玩家综合排行榜</div>
+                    <table class="data-table" id="table-player-full"></table>
+                </div>
+                <div class="grid-2">
+                    <div class="section">
+                        <div class="section-title">🏆 MVP排行榜</div>
+                        <table class="data-table" id="table-mvp"></table>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">🎮 英雄池排行榜</div>
+                        <table class="data-table" id="table-hero-pool"></table>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="section">
+                        <div class="section-title">🔥 连胜排行榜</div>
+                        <table class="data-table" id="table-streak"></table>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">📅 活跃度排行榜</div>
+                        <table class="data-table" id="table-activity"></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 英雄数据 -->
+            <div id="tab-heroes" class="tab-content">
+                <div class="section">
+                    <div class="section-title">⚔️ 英雄胜率排行榜</div>
+                    <table class="data-table" id="table-hero-full"></table>
+                </div>
+            </div>
+            
+            <!-- 组合数据 -->
+            <div id="tab-combos" class="tab-content">
+                <div class="grid-2">
+                    <div class="section">
+                        <div class="section-title">🤝 最佳队友组合</div>
+                        <table class="data-table" id="table-teammate"></table>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">⚔️ 最佳英雄组合</div>
+                        <table class="data-table" id="table-hero-combo"></table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 比赛记录 -->
+            <div id="tab-records" class="tab-content">
+                <div class="section">
+                    <div class="section-title">📋 比赛记录</div>
+                    <table class="data-table" id="table-matches"></table>
+                    <div id="pagination" style="margin-top:16px;text-align:center;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部 -->
+        <div class="footer">
+            <p>实时数据分析系统 | 支持自定义时间范围筛选</p>
+            <p class="copyright">Copyright: Yuanhang Zhang -- v5.0 (Interactive)</p>
+        </div>
+    </div>
+    
+    <script>
+        // ========== 全局状态 ==========
+        let currentYear = 'all';
+        let startDate = null;
+        let endDate = null;
+        let currentPage = 1;
+        
+        // ========== 初始化 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDateRange();
+            loadStats();
+        });
+        
+        // ========== API调用 ==========
+        async function apiCall(endpoint) {
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                if (data.success) {
+                    return data.data;
+                } else {
+                    console.error('API Error:', data.error);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                return null;
+            }
+        }
+        
+        // ========== 加载日期范围 ==========
+        async function loadDateRange() {
+            const data = await apiCall('/api/dates');
+            if (data) {
+                // 填充年份选择
+                const yearSelect = document.getElementById('year-select');
+                yearSelect.innerHTML = '<option value="all">全部数据</option>';
+                data.years.forEach(year => {
+                    yearSelect.innerHTML += `<option value="${year}">${year}年</option>`;
+                });
+                
+                // 设置日期范围
+                document.getElementById('start-date').min = data.min_date;
+                document.getElementById('start-date').max = data.max_date;
+                document.getElementById('end-date').min = data.min_date;
+                document.getElementById('end-date').max = data.max_date;
+                
+                // 更新头部信息
+                document.getElementById('header-info').textContent = 
+                    `数据范围: ${data.min_date} ~ ${data.max_date} | 共 ${data.total_matches} 场比赛`;
+            }
+        }
+        
+        // ========== 加载统计数据 ==========
+        async function loadStats() {
+            // 构建查询参数
+            let params = new URLSearchParams();
+            if (currentYear !== 'all') {
+                params.append('year', currentYear);
+            }
+            if (startDate) params.append('start_date', startDate);
+            if (endDate) params.append('end_date', endDate);
+            
+            // 显示加载状态
+            showLoading();
+            
+            const data = await apiCall('/api/stats?' + params.toString());
+            
+            if (data && data.has_data) {
+                renderBasicStats(data.basic_stats);
+                renderPlayerTop(data.player_leaderboard);
+                renderHeroTop(data.hero_leaderboard);
+                renderDailyStats(data.daily_stats);
+                renderBounty(data.bounty_leaderboard, data.bounty_pool_info, data.bounty_dates);
+                renderPlayerFull(data.player_leaderboard);
+                renderMVP(data.mvp_leaderboard);
+                renderHeroPool(data.hero_pool_leaderboard);
+                renderStreak(data.streak_leaderboard);
+                renderActivity(data.activity_leaderboard);
+                renderHeroFull(data.hero_leaderboard);
+                renderTeammate(data.teammate_leaderboard);
+                renderHeroCombo(data.hero_combo_leaderboard);
+            } else {
+                showNoData();
+            }
+            
+            // 加载比赛记录
+            loadMatches();
+        }
+        
+        // ========== 加载比赛记录 ==========
+        async function loadMatches(page = 1) {
+            currentPage = page;
+            let params = new URLSearchParams();
+            if (currentYear !== 'all') params.append('year', currentYear);
+            if (startDate) params.append('start_date', startDate);
+            if (endDate) params.append('end_date', endDate);
+            params.append('page', page);
+            params.append('per_page', 15);
+            
+            const data = await apiCall('/api/matches?' + params.toString());
+            
+            if (data) {
+                renderMatches(data.matches);
+                renderPagination(data.total_pages, data.page);
+            }
+        }
+        
+        // ========== 刷新数据 ==========
+        async function refreshData() {
+            await apiCall('/api/refresh');
+            loadDateRange();
+            loadStats();
+        }
+        
+        // ========== 事件处理 ==========
+        function onYearChange() {
+            currentYear = document.getElementById('year-select').value;
+            // 清除自定义日期
+            document.getElementById('start-date').value = '';
+            document.getElementById('end-date').value = '';
+            startDate = null;
+            endDate = null;
+            loadStats();
+        }
+        
+        function onDateChange() {
+            startDate = document.getElementById('start-date').value || null;
+            endDate = document.getElementById('end-date').value || null;
+            // 如果设置了自定义日期，清除年份筛选
+            if (startDate || endDate) {
+                document.getElementById('year-select').value = 'all';
+                currentYear = 'all';
+            }
+        }
+        
+        function showTab(tabId) {
+            // 隐藏所有Tab
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // 显示选中的Tab
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // ========== 渲染函数 ==========
+        function showLoading() {
+            document.getElementById('basic-stats').innerHTML = `
+                <div class="loading" style="grid-column: 1/-1;">
+                    <div class="loading-spinner"></div>
+                    <p>加载中...</p>
+                </div>
+            `;
+        }
+        
+        function showNoData() {
+            document.getElementById('basic-stats').innerHTML = `
+                <div class="no-data" style="grid-column: 1/-1;">
+                    <div class="no-data-icon">📭</div>
+                    <p>所选时间范围内没有比赛数据</p>
+                </div>
+            `;
+        }
+        
+        function renderBasicStats(stats) {
+            const html = `
+                <div class="stat-card"><div class="value">${stats.total_games}</div><div class="label">比赛场次</div></div>
+                <div class="stat-card"><div class="value">${stats.total_days}</div><div class="label">比赛天数</div></div>
+                <div class="stat-card"><div class="value">${stats.total_players}</div><div class="label">参赛玩家</div></div>
+                <div class="stat-card"><div class="value">${stats.total_heroes}</div><div class="label">使用英雄</div></div>
+                <div class="stat-card"><div class="value">${stats.blue_wins}</div><div class="label">蓝方胜场</div></div>
+                <div class="stat-card"><div class="value">${stats.blue_win_rate.toFixed(1)}%</div><div class="label">蓝方胜率</div></div>
+                <div class="stat-card"><div class="value">${stats.red_wins}</div><div class="label">红方胜场</div></div>
+                <div class="stat-card"><div class="value">${stats.red_win_rate.toFixed(1)}%</div><div class="label">红方胜率</div></div>
+            `;
+            document.getElementById('basic-stats').innerHTML = html;
+        }
+        
+        function renderTable(tableId, headers, data, keyMap) {
+            let html = '<thead><tr>';
+            headers.forEach(h => html += `<th>${h}</th>`);
+            html += '</tr></thead><tbody>';
+            
+            data.forEach((row, idx) => {
+                const rankClass = idx < 3 ? `rank-${idx + 1}` : '';
+                html += `<tr class="${rankClass}">`;
+                keyMap.forEach(key => {
+                    html += `<td>${row[key] !== undefined ? row[key] : ''}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody>';
+            document.getElementById(tableId).innerHTML = html;
+        }
+        
+        function renderPlayerTop(data) {
+            renderTable('table-player-top', 
+                ['排名', '玩家', '胜率', '场次', '胜场', 'MVP'],
+                data.slice(0, 10),
+                ['index', '玩家', '总胜率百分比', '总场次', '总胜场', 'MVP次数']
+            );
+        }
+        
+        function renderHeroTop(data) {
+            renderTable('table-hero-top',
+                ['排名', '英雄', '胜率', '场次', '胜场', '使用玩家'],
+                data.slice(0, 10),
+                ['index', '英雄', '总胜率百分比', '总场次', '总胜场', '使用玩家数']
+            );
+        }
+        
+        function renderDailyStats(data) {
+            renderTable('table-daily',
+                ['序号', '日期', '比赛场次', '蓝方胜场', '红方胜场', '蓝方胜率', '红方胜率'],
+                data,
+                ['index', '日期', '比赛场次', '蓝方胜场', '红方胜场', '蓝方胜率', '红方胜率']
+            );
+        }
+        
+        function renderBounty(data, poolInfo, dates) {
+            // 更新奖金池信息
+            if (poolInfo) {
+                document.getElementById('pool-initial').textContent = poolInfo.initial + ' 元';
+                document.getElementById('pool-distributed').textContent = poolInfo.distributed + ' 元';
+                const remaining = poolInfo.remaining;
+                const remainingEl = document.getElementById('pool-remaining');
+                remainingEl.textContent = remaining + ' 元';
+                // 如果超支，显示红色警示
+                if (remaining < 0) {
+                    remainingEl.style.color = '#ffcccb';
+                } else if (remaining < 100) {
+                    remainingEl.style.color = '#ffeaa7';
+                }
+            }
+            
+            // 动态生成表头：排名、玩家、总赏金 + 每日日期
+            const headers = ['排名', '玩家', '总赏金'];
+            const fields = ['index', '玩家', '总赏金'];
+            
+            if (dates && dates.length > 0) {
+                dates.forEach(date => {
+                    // 简化日期显示：从 "2025-12-23" 变成 "12-23"
+                    const shortDate = date.substring(5);
+                    headers.push(shortDate);
+                    fields.push(date);
+                });
+            }
+            
+            renderTable('table-bounty', headers, data, fields);
+        }
+        
+        function renderPlayerFull(data) {
+            renderTable('table-player-full',
+                ['排名', '玩家', '胜率', '场次', '胜场', 'MVP', '英雄池', '最长连胜', '当前连胜'],
+                data,
+                ['index', '玩家', '总胜率百分比', '总场次', '总胜场', 'MVP次数', '英雄池数量', '最长连胜', '当前连胜']
+            );
+        }
+        
+        function renderMVP(data) {
+            renderTable('table-mvp',
+                ['排名', '玩家', 'MVP次数', '总场次', 'MVP率'],
+                data,
+                ['index', '玩家', 'MVP次数', '总场次', 'MVP率']
+            );
+        }
+        
+        function renderHeroPool(data) {
+            renderTable('table-hero-pool',
+                ['排名', '玩家', '英雄池数量', '总场次', '平均每英雄场次'],
+                data,
+                ['index', '玩家', '英雄池数量', '总场次', '平均每英雄场次']
+            );
+        }
+        
+        function renderStreak(data) {
+            renderTable('table-streak',
+                ['排名', '玩家', '最长连胜', '当前连胜'],
+                data,
+                ['index', '玩家', '最长连胜', '当前连胜']
+            );
+        }
+        
+        function renderActivity(data) {
+            renderTable('table-activity',
+                ['排名', '玩家', '活跃天数', '总场次', '场均比赛'],
+                data,
+                ['index', '玩家', '活跃天数', '总场次', '场均比赛']
+            );
+        }
+        
+        function renderHeroFull(data) {
+            renderTable('table-hero-full',
+                ['排名', '英雄', '胜率', '场次', '胜场', '使用玩家数'],
+                data,
+                ['index', '英雄', '总胜率百分比', '总场次', '总胜场', '使用玩家数']
+            );
+        }
+        
+        function renderTeammate(data) {
+            renderTable('table-teammate',
+                ['排名', '队友组合', '一起出场', '胜率'],
+                data,
+                ['index', '队友组合', '一起出场', '胜率百分比']
+            );
+        }
+        
+        function renderHeroCombo(data) {
+            renderTable('table-hero-combo',
+                ['排名', '英雄组合', '一起出场', '胜率'],
+                data,
+                ['index', '英雄组合', '一起出场', '胜率百分比']
+            );
+        }
+        
+        function renderMatches(matches) {
+            let html = `<thead><tr>
+                <th>比赛ID</th><th>日期</th><th>胜方</th>
+                <th>蓝方边路</th><th>蓝方打野</th><th>蓝方中路</th><th>蓝方发育路</th><th>蓝方游走</th>
+                <th>红方边路</th><th>红方打野</th><th>红方中路</th><th>红方发育路</th><th>红方游走</th>
+            </tr></thead><tbody>`;
+            
+            matches.forEach(m => {
+                const winTag = m['胜方'] === '蓝' ? 
+                    '<span class="tag tag-blue">蓝</span>' : 
+                    '<span class="tag tag-red">红</span>';
+                html += `<tr>
+                    <td>${m['比赛ID']}</td>
+                    <td>${m['比赛时间']}</td>
+                    <td>${winTag}</td>
+                    <td>${m['蓝方边'] || ''}</td>
+                    <td>${m['蓝方野'] || ''}</td>
+                    <td>${m['蓝方中'] || ''}</td>
+                    <td>${m['蓝方射'] || ''}</td>
+                    <td>${m['蓝方辅'] || ''}</td>
+                    <td>${m['红方边'] || ''}</td>
+                    <td>${m['红方野'] || ''}</td>
+                    <td>${m['红方中'] || ''}</td>
+                    <td>${m['红方射'] || ''}</td>
+                    <td>${m['红方辅'] || ''}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody>';
+            document.getElementById('table-matches').innerHTML = html;
+        }
+        
+        function renderPagination(totalPages, currentPage) {
+            let html = '';
+            
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    html += `<button class="btn btn-secondary" onclick="loadMatches(${currentPage - 1})">上一页</button> `;
+                }
+                
+                html += `<span style="margin:0 16px;">第 ${currentPage} / ${totalPages} 页</span>`;
+                
+                if (currentPage < totalPages) {
+                    html += `<button class="btn btn-secondary" onclick="loadMatches(${currentPage + 1})">下一页</button>`;
+                }
+            }
+            
+            document.getElementById('pagination').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
