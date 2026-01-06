@@ -2402,7 +2402,7 @@ def generate_html_report():
     for date in bounty_dates:
         short_date = date[5:]  # 从 "2026-01-02" 变成 "01-02"
         html_content += f"""
-                            <th width="45">{short_date}</th>
+                            <th width="60">{short_date}</th>
         """
     
     html_content += """
